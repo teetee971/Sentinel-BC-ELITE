@@ -67,63 +67,12 @@ const allResources: Resource[] = [
   },
 ];
 
-export async function POST(request: NextRequest) {
-  try {
-    const body: ListResourcesRequest = await request.json();
-    const { path = '', cursor = null, only_tools = false } = body;
-
-    let filteredResources = allResources;
-
-    // Filter by path if provided
-    if (path) {
-      filteredResources = filteredResources.filter(resource =>
-        resource.path.startsWith(path)
-      );
-    }
-
-    // Filter by only_tools if true
-    if (only_tools) {
-      filteredResources = filteredResources.filter(
-        resource => resource.type === 'tool'
-      );
-    }
-
-    // Handle pagination with cursor
-    const pageSize = 10;
-    let startIndex = 0;
-
-    if (cursor) {
-      const cursorIndex = parseInt(cursor, 10);
-      if (!isNaN(cursorIndex)) {
-        startIndex = cursorIndex;
-      }
-    }
-
-    const endIndex = startIndex + pageSize;
-    const paginatedResources = filteredResources.slice(startIndex, endIndex);
-    const nextCursor =
-      endIndex < filteredResources.length ? endIndex.toString() : null;
-
-    const response: ListResourcesResponse = {
-      resources: paginatedResources,
-      next_cursor: nextCursor,
-    };
-
-    return NextResponse.json(response);
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to list resources' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const path = searchParams.get('path') || '';
-  const cursor = searchParams.get('cursor');
-  const only_tools = searchParams.get('only_tools') === 'true';
-
+// Shared function to filter and paginate resources
+function filterAndPaginateResources(
+  path: string,
+  cursor: string | null,
+  only_tools: boolean
+): ListResourcesResponse {
   let filteredResources = allResources;
 
   // Filter by path if provided
@@ -146,7 +95,7 @@ export async function GET(request: NextRequest) {
 
   if (cursor) {
     const cursorIndex = parseInt(cursor, 10);
-    if (!isNaN(cursorIndex)) {
+    if (!isNaN(cursorIndex) && cursorIndex >= 0) {
       startIndex = cursorIndex;
     }
   }
@@ -156,10 +105,33 @@ export async function GET(request: NextRequest) {
   const nextCursor =
     endIndex < filteredResources.length ? endIndex.toString() : null;
 
-  const response: ListResourcesResponse = {
+  return {
     resources: paginatedResources,
     next_cursor: nextCursor,
   };
+}
 
+export async function POST(request: NextRequest) {
+  try {
+    const body: ListResourcesRequest = await request.json();
+    const { path = '', cursor = null, only_tools = false } = body;
+
+    const response = filterAndPaginateResources(path, cursor, only_tools);
+    return NextResponse.json(response);
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to list resources' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const path = searchParams.get('path') || '';
+  const cursor = searchParams.get('cursor');
+  const only_tools = searchParams.get('only_tools') === 'true';
+
+  const response = filterAndPaginateResources(path, cursor, only_tools);
   return NextResponse.json(response);
 }
