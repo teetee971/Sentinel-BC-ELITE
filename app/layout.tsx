@@ -1,13 +1,10 @@
 import "../styles/globals.css";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Particles from "./ui/Particles";
-
-const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
 	title: {
@@ -57,7 +54,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 	return (
 		<html lang="fr" data-theme="bc-elite">
 			<body
-				className={`${inter.className} bg-black text-white antialiased selection:bg-cyan-500/25 selection:text-white`}
+				className="font-sans bg-black text-white antialiased selection:bg-cyan-500/25 selection:text-white"
 			>
 				<Particles />
 				<div className="relative flex min-h-screen flex-col overflow-hidden">
