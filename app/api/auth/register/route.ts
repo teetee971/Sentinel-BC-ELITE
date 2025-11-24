@@ -73,11 +73,12 @@ export async function POST(request: Request) {
 		return NextResponse.json(response, { status: 201 });
 	} catch (error) {
 		console.error("Registration error:", error);
+		const errorMessage = process.env.NODE_ENV === "production" 
+			? "Registration failed"
+			: `Registration failed: ${error instanceof Error ? error.message : "Unknown error"}`;
+		
 		return NextResponse.json(
-			{
-				error: "Registration failed",
-				details: error instanceof Error ? error.message : "Unknown error",
-			},
+			{ error: errorMessage },
 			{ status: 500 }
 		);
 	}

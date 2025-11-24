@@ -110,6 +110,11 @@ JWT_SECRET=your-strong-jwt-secret-key
 2. **JWT Tokens**: JSON Web Tokens with 24-hour expiration
 3. **Input Validation**: Comprehensive validation for all inputs
 4. **Secure Routes**: Authentication endpoints are exempt from API key middleware
+5. **Production Safety**: 
+   - JWT_SECRET must be set in production (runtime check)
+   - Error details are hidden in production to prevent information leakage
+   - Crypto API availability check for UUID generation
+6. **Error Logging**: All errors are logged server-side for debugging while keeping client responses secure
 
 ## Usage Example
 

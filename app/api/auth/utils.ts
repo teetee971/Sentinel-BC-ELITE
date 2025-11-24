@@ -11,7 +11,7 @@ const globalForUsers = global as unknown as {
 const users: User[] = globalForUsers.users ?? [];
 globalForUsers.users = users;
 
-const JWT_SECRET = process.env.JWT_SECRET || "sentinel-bc-elite-secret-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = 10;
 
 export async function hashPassword(password: string): Promise<string> {
@@ -26,6 +26,20 @@ export async function comparePassword(
 }
 
 export function generateToken(user: User): string {
+	if (!JWT_SECRET) {
+		if (process.env.NODE_ENV === "production") {
+			throw new Error("JWT_SECRET environment variable must be set in production");
+		}
+		// Use a fallback for development/build time only
+		const fallbackSecret = "dev-secret-do-not-use-in-production";
+		const payload: TokenPayload = {
+			userId: user.id,
+			email: user.email,
+			username: user.username,
+		};
+		return jwt.sign(payload, fallbackSecret, { expiresIn: "24h" });
+	}
+	
 	const payload: TokenPayload = {
 		userId: user.id,
 		email: user.email,
@@ -35,6 +49,19 @@ export function generateToken(user: User): string {
 }
 
 export function verifyToken(token: string): TokenPayload | null {
+	if (!JWT_SECRET) {
+		if (process.env.NODE_ENV === "production") {
+			throw new Error("JWT_SECRET environment variable must be set in production");
+		}
+		// Use a fallback for development/build time only
+		const fallbackSecret = "dev-secret-do-not-use-in-production";
+		try {
+			return jwt.verify(token, fallbackSecret) as TokenPayload;
+		} catch {
+			return null;
+		}
+	}
+	
 	try {
 		return jwt.verify(token, JWT_SECRET) as TokenPayload;
 	} catch {
@@ -55,6 +82,11 @@ export function createUser(
 	username: string,
 	passwordHash: string
 ): User {
+	// Ensure crypto.randomUUID is available
+	if (typeof crypto === "undefined" || typeof crypto.randomUUID !== "function") {
+		throw new Error("crypto.randomUUID is not available in this environment");
+	}
+	
 	const user: User = {
 		id: crypto.randomUUID(),
 		email: email.toLowerCase(),

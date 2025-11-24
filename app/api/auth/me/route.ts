@@ -37,11 +37,12 @@ export async function GET(request: Request) {
 		});
 	} catch (error) {
 		console.error("Get user error:", error);
+		const errorMessage = process.env.NODE_ENV === "production"
+			? "Failed to get user info"
+			: `Failed to get user info: ${error instanceof Error ? error.message : "Unknown error"}`;
+		
 		return NextResponse.json(
-			{
-				error: "Failed to get user info",
-				details: error instanceof Error ? error.message : "Unknown error",
-			},
+			{ error: errorMessage },
 			{ status: 500 }
 		);
 	}

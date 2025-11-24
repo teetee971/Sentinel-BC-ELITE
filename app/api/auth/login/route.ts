@@ -48,11 +48,12 @@ export async function POST(request: Request) {
 		return NextResponse.json(response);
 	} catch (error) {
 		console.error("Login error:", error);
+		const errorMessage = process.env.NODE_ENV === "production"
+			? "Login failed"
+			: `Login failed: ${error instanceof Error ? error.message : "Unknown error"}`;
+		
 		return NextResponse.json(
-			{
-				error: "Login failed",
-				details: error instanceof Error ? error.message : "Unknown error",
-			},
+			{ error: errorMessage },
 			{ status: 500 }
 		);
 	}
