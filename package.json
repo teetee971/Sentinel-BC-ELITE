@@ -1,1 +1,25 @@
-{ "name":"sentinel-bcelite","version":"1.0.0" }
+{
+	"name": "sentinel-bc-elite",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start"
+	},
+	"dependencies": {
+		"next": "14.2.0",
+		"react": "18.3.1",
+		"react-dom": "18.3.1"
+	},
+	"devDependencies": {
+		"@types/node": "20.11.24",
+		"@types/react": "18.2.46",
+		"@types/react-dom": "18.2.17",
+		"autoprefixer": "10.4.19",
+		"eslint": "^9.39.1",
+		"postcss": "8.4.31",
+		"tailwindcss": "3.4.10",
+		"typescript": "5.4.3"
+	}
+}

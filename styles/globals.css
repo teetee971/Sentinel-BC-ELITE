@@ -1,1 +1,172 @@
-/* styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	color-scheme: dark;
+}
+
+@layer base {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	html {
+		@apply scroll-smooth;
+	}
+
+	body {
+		margin: 0;
+		min-height: 100vh;
+		background: radial-gradient(circle at center, #061018 0%, #000 80%);
+		color: #f8fbff;
+		font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		overflow-x: hidden;
+	}
+
+	body::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		z-index: -2;
+		background: radial-gradient(circle at top, rgba(0, 234, 255, 0.18), transparent 65%);
+		pointer-events: none;
+	}
+
+	body::after {
+		content: "";
+		position: fixed;
+		inset: 0;
+		z-index: -3;
+		background-image: url("/grid.svg");
+		background-size: 600px 600px;
+		opacity: 0.05;
+		animation: gridMove 22s linear infinite;
+		pointer-events: none;
+	}
+
+	a {
+		text-decoration: none;
+	}
+}
+
+@layer utilities {
+	.hud-scan {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.hud-scan::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, transparent, rgba(0, 234, 255, 0.28), transparent);
+		animation: hudScan 6s linear infinite;
+		mix-blend-mode: screen;
+	}
+
+	.neon-text {
+		text-shadow: 0 0 10px rgba(0, 234, 255, 0.6), 0 0 25px rgba(0, 234, 255, 0.4);
+	}
+
+	.glitch {
+		animation: glitchShift 900ms steps(2, end) infinite;
+	}
+
+	.scan-line {
+		pointer-events: none;
+	}
+
+	.scan-line::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		background: linear-gradient(180deg, transparent, rgba(0, 234, 255, 0.25), transparent);
+		animation: scanMove 4s linear infinite;
+	}
+
+	.glow-ultra {
+		text-shadow: 0 0 15px #00eaff, 0 0 30px #00eaff, 0 0 60px #00eaff;
+	}
+
+	.depth-layer {
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(circle, rgba(0, 200, 255, 0.1), transparent);
+		animation: depthFloat 12s ease-in-out infinite alternate;
+	}
+
+	.card-futuristic {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.card-futuristic::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border: 1px solid rgba(0, 234, 255, 0.18);
+		border-radius: inherit;
+		-webkit-mask-image: linear-gradient(45deg, transparent 20%, black 50%, transparent 80%);
+		mask-image: linear-gradient(45deg, transparent 20%, black 50%, transparent 80%);
+		opacity: 0.6;
+		pointer-events: none;
+	}
+}
+
+@keyframes gridMove {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(600px);
+	}
+}
+
+@keyframes hudScan {
+	from {
+		transform: translateY(-100%);
+	}
+	to {
+		transform: translateY(100%);
+	}
+}
+
+@keyframes glitchShift {
+	0% {
+		transform: translate(0);
+	}
+	20% {
+		transform: translate(-2px, 1px);
+	}
+	40% {
+		transform: translate(2px, -1px);
+	}
+	60% {
+		transform: translate(-1px, 2px);
+	}
+	100% {
+		transform: translate(0);
+	}
+}
+
+@keyframes scanMove {
+	0% {
+		transform: translateY(-100%);
+	}
+	100% {
+		transform: translateY(100%);
+	}
+}
+
+@keyframes depthFloat {
+	0% {
+		transform: translate(-12px, -12px);
+	}
+	100% {
+		transform: translate(12px, 12px);
+	}
+}
